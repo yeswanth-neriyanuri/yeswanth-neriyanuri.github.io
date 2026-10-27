@@ -14,5 +14,5 @@ I've spent eight years building production systems: three in banking and five in
 
 **Hiring for distributed systems or agent infrastructure?** I'm open to new roles.
 
-*   **LinkedIn:** [Yeshwanth Sharma Neriyanuri](https://in.linkedin.com/in/yeshwanth-sharma-neriyanuri-3a9590a3)
+*   **LinkedIn:** [Yeshwanth Neriyanuri](https://www.linkedin.com/in/yeswanth-neriyanuri-3a9590a3)
 *   **Email:** [hithisisyeshwanth@gmail.com](mailto:hithisisyeshwanth@gmail.com)

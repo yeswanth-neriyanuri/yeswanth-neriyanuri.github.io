@@ -64,7 +64,7 @@ enableRobotsTXT = true
     text = "**Hiring for distributed systems or agent infrastructure?** I'm open to new roles."
     [[params.cta.links]]
       name = "LinkedIn"
-      url = "https://in.linkedin.com/in/yeshwanth-sharma-neriyanuri-3a9590a3"
+      url = "https://www.linkedin.com/in/yeswanth-neriyanuri-3a9590a3"
     [[params.cta.links]]
       name = "Email"
       url = "mailto:hithisisyeshwanth@gmail.com"
@@ -78,7 +78,7 @@ enableRobotsTXT = true
     url = "https://github.com/hithisisyeshwanth/hithisisyeshwanth.github.io"
   [[params.socialIcons]]
     name = "linkedin"
-    url = "https://in.linkedin.com/in/yeshwanth-sharma-neriyanuri-3a9590a3"
+    url = "https://www.linkedin.com/in/yeswanth-neriyanuri-3a9590a3"
   [[params.socialIcons]]
     name = "email"
     url = "mailto:hithisisyeshwanth@gmail.com"
