@@ -1,4 +1,4 @@
-baseURL = "https://hithisisyeshwanth.github.io/"
+baseURL = "https://yeswanth-neriyanuri.github.io/"
 locale = "en-US"
 title = "Yeshwanth Neriyanuri"
 enableEmoji = true
@@ -75,7 +75,7 @@ enableRobotsTXT = true
 
   [[params.socialIcons]]
     name = "github"
-    url = "https://github.com/hithisisyeshwanth/hithisisyeshwanth.github.io"
+    url = "https://github.com/yeswanth-neriyanuri/yeswanth-neriyanuri.github.io"
   [[params.socialIcons]]
     name = "linkedin"
     url = "https://www.linkedin.com/in/yeswanth-neriyanuri-3a9590a3"
