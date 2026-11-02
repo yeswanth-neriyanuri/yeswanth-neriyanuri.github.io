@@ -16,6 +16,49 @@
 .main .profile {
     min-height: 0;
     padding: calc(var(--gap) * 2) 0 var(--gap);
+    justify-content: flex-start;
+    text-align: left;
+}
+
+/* Intro text on the left, photo on the right, instead of PaperMod's centred stack. */
+.profile .profile_inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: calc(var(--gap) * 2);
+    row-gap: 1rem;
+    align-items: start;
+    width: 100%;
+}
+
+.profile .profile_inner img {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+}
+
+.profile .profile_inner > :not(img) {
+    grid-column: 1;
+}
+
+/* The negative margin cancels each icon link's 10px padding, so the icons line up with the text. */
+.profile .social-icons {
+    padding: 0;
+    margin-left: -10px;
+    text-align: left;
+}
+
+/* Too narrow for two columns: stack, with the photo first and still left-aligned. */
+@media (max-width: 560px) {
+    .profile .profile_inner {
+        grid-template-columns: 1fr;
+    }
+
+    .profile .profile_inner img {
+        grid-column: 1;
+        grid-row: auto;
+        width: 120px;
+        height: 120px;
+        transform: none;
+    }
 }
 
 .home-section {
