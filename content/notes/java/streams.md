@@ -2,6 +2,7 @@
 title: "Java Streams"
 description: "Quick reference for the Stream API: creating, transforming and collecting."
 date: 2026-11-03
+weight: 4
 draft: false        # true keeps it off the live site
 ---
 

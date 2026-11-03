@@ -17,7 +17,7 @@ enableRobotsTXT = true
   projects = "/projects/:slug/"
 
 [pagination]
-  pagerSize = 5
+  pagerSize = 20
 
 [taxonomies]
   category = "categories"
