@@ -13,4 +13,6 @@ cascade:
   robotsNoIndex: true
   searchHidden: true
   hiddenInRss: true
+  ShowToc: true
+  TocOpen: true
 ---

@@ -3,8 +3,6 @@ title: "Java Streams"
 description: "Quick reference for the Stream API: creating, transforming and collecting."
 date: 2026-11-03
 draft: false        # true keeps it off the live site
-ShowToc: true       # table of contents from the ## headings
-TocOpen: false
 ---
 
 ## What a stream is
@@ -51,6 +49,69 @@ Map<Integer, List<String>> byLength =
     names.stream().collect(Collectors.groupingBy(String::length));
 // {2=[cy], 3=[ana, bob]}
 ```
+
+## flatMap
+
+Use `flatMap` when each element turns into several elements and you want one flat stream.
+
+```java
+List<List<Integer>> nested = List.of(List.of(1, 2), List.of(3));
+List<Integer> flat = nested.stream()
+    .flatMap(List::stream)
+    .toList();                     // [1, 2, 3]
+```
+
+## Primitive streams
+
+`IntStream`, `LongStream` and `DoubleStream` avoid boxing and add numeric helpers.
+
+### Converting
+
+```java
+int total = names.stream().mapToInt(String::length).sum();   // Stream -> IntStream
+List<Integer> boxed = IntStream.range(0, 3).boxed().toList(); // IntStream -> Stream
+```
+
+### Statistics
+
+```java
+IntSummaryStatistics s = IntStream.of(4, 8, 15).summaryStatistics();
+s.getMin(); s.getMax(); s.getAverage(); // 4, 15, 9.0
+```
+
+## Short-circuiting and Optional
+
+Some terminal operations stop early and return an `Optional`, because there may be no result.
+
+```java
+Optional<String> first = names.stream()
+    .filter(n -> n.startsWith("b"))
+    .findFirst();                  // Optional[bob]
+
+boolean any = names.stream().anyMatch(n -> n.isEmpty()); // false
+```
+
+| Operation | Stops early | Returns |
+|---|---|---|
+| `findFirst()` / `findAny()` | yes | `Optional<T>` |
+| `anyMatch` / `allMatch` / `noneMatch` | yes | `boolean` |
+| `limit(n)` | yes | stream |
+| `min` / `max` | no | `Optional<T>` |
+
+## Parallel streams
+
+`parallelStream()` splits work across the common ForkJoin pool.
+
+### When it helps
+
+- Large data sets with CPU-heavy, independent work per element.
+- Sources that split cheaply, like `ArrayList` and arrays.
+
+### When it hurts
+
+- Small data sets, where the setup costs more than the work.
+- Blocking I/O inside the pipeline, which starves the shared pool.
+- Order-dependent operations like `findFirst` and `forEachOrdered`.
 
 ## Gotchas
 

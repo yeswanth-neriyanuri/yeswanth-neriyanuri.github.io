@@ -1,0 +1,21 @@
+{{- /* Highlights the table-of-contents entry for the section being read. */ -}}
+{{- if .Param "ShowToc" }}
+<script>
+  (() => {
+    const links = [...document.querySelectorAll(".toc a[href^='#']")];
+    const byId = new Map(links.map(a => [decodeURIComponent(a.hash.slice(1)), a]));
+    const headings = [...byId.keys()].map(id => document.getElementById(id)).filter(Boolean);
+    if (!headings.length) return;
+    const update = () => {
+      // The last heading scrolled up to near the top is the one being read; at the very
+      // bottom of the page, the last heading wins even if it can't scroll that far.
+      let current = headings[0];
+      for (const h of headings) if (h.getBoundingClientRect().top < 100) current = h;
+      if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) current = headings.at(-1);
+      links.forEach(a => a.classList.toggle("active", a === byId.get(current.id)));
+    };
+    addEventListener("scroll", update, { passive: true });
+    update();
+  })();
+</script>
+{{- end }}
