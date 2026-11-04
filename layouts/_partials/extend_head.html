@@ -1,0 +1,21 @@
+{{- /* Password prompt on /notes/ pages. A deterrent only: the page is already downloaded and
+       the Markdown is in the public repo. Set params.notesPasswordHash to turn it on. */ -}}
+{{- with site.Params.notesPasswordHash }}{{ if eq $.Section "notes" }}
+<style>html.notes-locked body { visibility: hidden; }</style>
+<script>
+  (() => {
+    const want = {{ . }};
+    const key = "notes-unlocked";
+    try { if (localStorage.getItem(key) === want) return; } catch {}
+    document.documentElement.classList.add("notes-locked");
+    const pw = prompt("Password for notes:");
+    if (!pw) return location.replace("/");
+    crypto.subtle.digest("SHA-256", new TextEncoder().encode(pw)).then(buf => {
+      const hex = [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+      if (hex !== want) { alert("Wrong password."); return location.replace("/"); }
+      try { localStorage.setItem(key, want); } catch {}
+      document.documentElement.classList.remove("notes-locked");
+    });
+  })();
+</script>
+{{- end }}{{ end }}
