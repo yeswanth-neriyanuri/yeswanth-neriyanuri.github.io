@@ -31,6 +31,9 @@ enableRobotsTXT = true
 [outputFormats.RSS]
   baseName = "feed"
 
+[services.googleAnalytics]
+  ID = "G-YPW3ZZLPVS"
+
 [markup.highlight]
   style = "monokai"
 
