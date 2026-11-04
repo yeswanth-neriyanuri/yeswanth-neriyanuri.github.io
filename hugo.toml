@@ -41,9 +41,6 @@ enableRobotsTXT = true
   env = "production"
   description = "Software engineer building distributed systems, microservices and test harnesses for agentic AI. Paper implementations on reliable backend infrastructure."
   author = "Yeshwanth Neriyanuri"
-  # SHA-256 of the /notes/ password (layouts/_partials/extend_head.html). Public; a deterrent only.
-  # Generate: printf '%s' 'new-password' | shasum -a 256
-  notesPasswordHash = "aea9721f558677a5cce1d9afbc6943e2e876f81b17a43f76e20179a95e184e63"
   defaultTheme = "dark"
   ShowReadingTime = true
   ShowBreadCrumbs = true

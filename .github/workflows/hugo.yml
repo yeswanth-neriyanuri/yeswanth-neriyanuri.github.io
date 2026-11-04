@@ -1,5 +1,7 @@
 # Builds the Hugo site and deploys it to GitHub Pages.
 # Requires Settings -> Pages -> Source = "GitHub Actions".
+# /notes/ comes from the private repo yeswanth-neriyanuri/blog-notes and is published only
+# encrypted. Secrets: NOTES_TOKEN (read access to blog-notes), NOTES_PASSWORD.
 name: Deploy Hugo site to Pages
 
 on:
@@ -26,6 +28,8 @@ jobs:
     env:
       HUGO_VERSION: 0.167.0
       HUGO_ENVIRONMENT: production
+      # StatiCrypt salt: public. One salt for every page, so "Remember me" unlocks all notes at once.
+      NOTES_SALT: a866ba851fc8fa221a420528681e441b
     steps:
       - name: Install Hugo (extended)
         run: |
@@ -33,6 +37,12 @@ jobs:
           sudo dpkg -i ${{ runner.temp }}/hugo.deb
       - name: Checkout
         uses: actions/checkout@v7
+      - name: Checkout notes (private)
+        uses: actions/checkout@v7
+        with:
+          repository: yeswanth-neriyanuri/blog-notes
+          token: ${{ secrets.NOTES_TOKEN }}
+          path: content/notes
       - name: Set up Go (for Hugo modules)
         uses: actions/setup-go@v7
         with:
@@ -43,6 +53,20 @@ jobs:
         uses: actions/configure-pages@v6
       - name: Build
         run: hugo --gc --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+      - name: Encrypt notes
+        env:
+          NOTES_PASSWORD: ${{ secrets.NOTES_PASSWORD }}
+        working-directory: public
+        run: |
+          [ -n "$NOTES_PASSWORD" ] || { echo "NOTES_PASSWORD secret is not set"; exit 1; }
+          npx --yes staticrypt@3.5.4 notes -r -d . -p "$NOTES_PASSWORD" -s "$NOTES_SALT" -c false \
+            --short --remember 30 --template-title "Notes" \
+            --template-instructions "These notes are private. Enter the password." \
+            --template-color-primary "#3a3b3e" --template-color-secondary "#1d1e20"
+          # Refuse to deploy if any notes page is still readable.
+          plain=$(grep -rL "staticrypt" notes --include='*.html' || true)
+          [ -z "$plain" ] || { echo "Unencrypted notes pages:"; echo "$plain"; exit 1; }
+          [ -z "$(find notes -type f ! -name '*.html')" ] || { echo "Non-HTML files under notes/"; exit 1; }
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:
