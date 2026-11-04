@@ -1,0 +1,4 @@
+# Loaded by `hugo server` (development environment) on top of hugo.toml.
+# Keep local visits out of Google Analytics.
+[privacy.googleAnalytics]
+  disable = true
