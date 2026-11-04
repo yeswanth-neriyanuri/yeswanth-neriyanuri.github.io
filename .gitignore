@@ -1,3 +1,6 @@
+# Notes live in the private repo yeswanth-neriyanuri/blog-notes, cloned here for local work.
+/content/notes/
+
 # Hugo build output and caches.
 public/
 resources/_gen/
