@@ -1,0 +1,25 @@
+{{- $src := .Get "src" -}}
+<link rel="stylesheet" href="https://esm.sh/@excalidraw/excalidraw@0.18.1/dist/prod/index.css">
+<div id="excalidraw-{{ .Ordinal }}" style="height:70vh;border:1px solid var(--border);border-radius:8px"></div>
+<script type="module">
+  // Excalifont (fontFamily 5) needs >=0.18; 0.17 renders its text invisible.
+  const deps = "?deps=react@18.2.0,react-dom@18.2.0";
+  const [{ default: React }, { createRoot }, { Excalidraw }, d] = await Promise.all([
+    import("https://esm.sh/react@18.2.0"),
+    import("https://esm.sh/react-dom@18.2.0/client"),
+    import("https://esm.sh/@excalidraw/excalidraw@0.18.1" + deps),
+    fetch({{ $src | relURL }}).then(r => r.json()),
+  ]);
+  const initialData = { elements: d.elements, appState: { viewBackgroundColor: "transparent" }, scrollToContent: true };
+  const root = createRoot(document.getElementById("excalidraw-{{ .Ordinal }}"));
+  const render = () => root.render(React.createElement(Excalidraw, {
+    initialData,
+    // The API arrives before the scene loads, hence the delay; initialData's scrollToContent only centres at 100% zoom.
+    excalidrawAPI: api => setTimeout(() => api.scrollToContent(d.elements, { fitToContent: true }), 300),
+    viewModeEnabled: true,
+    theme: document.documentElement.dataset.theme === "dark" ? "dark" : "light",
+  }));
+  render();
+  // PaperMod's theme toggle only flips this attribute.
+  new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>
