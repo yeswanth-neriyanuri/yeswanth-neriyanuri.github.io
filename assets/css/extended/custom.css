@@ -120,3 +120,6 @@
     color: var(--primary);
     font-weight: 600;
 }
+
+/* Notes search sits inside .post-content on the Notes page, whose list padding would indent the results. */
+.post-content .searchResults { padding: 0; }
