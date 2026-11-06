@@ -65,7 +65,7 @@ jobs:
             --template-color-primary "#3a3b3e" --template-color-secondary "#1d1e20"
           # The unlock page's background is white while it decrypts, which flashes on every notes visit.
           # Paint it the site's theme instead: dark by default, light if the PaperMod toggle chose light.
-          find notes -name '*.html' -exec perl -0pi -e 's|</head>|<style>html,body{background:rgb(29,30,32)}html.light,html.light body{background:#fff}</style><script>try{if(localStorage.getItem("pref-theme")==="light")document.documentElement.classList.add("light")}catch(e){}</script></head>|' {} +
+          find notes -name '*.html' -print0 | xargs -0 perl -0pi -e 's|</head>|<style>html,body{background:rgb(29,30,32)}html.light,html.light body{background:#fff}</style><script>try{if(localStorage.getItem("pref-theme")==="light")document.documentElement.classList.add("light")}catch(e){}</script></head>|'
           [ -z "$(grep -rL 'pref-theme' notes --include='*.html')" ] || { echo "Theme background missing on a notes page"; exit 1; }
           # Refuse to deploy if any notes page is still readable.
           plain=$(grep -rL "staticrypt" notes --include='*.html' || true)
