@@ -1,4 +1,15 @@
+{{- /* src: URL of a public .excalidraw file, fetched in the browser.
+     file: a .excalidraw file in the page's bundle, embedded in the HTML. Use it for notes, so the diagram is encrypted with the page. */ -}}
 {{- $src := .Get "src" -}}
+{{- $scene := "" -}}
+{{- with .Get "file" -}}
+  {{- with $.Page.Resources.Get . -}}
+    {{- $d := .Content | transform.Unmarshal -}}
+    {{- $scene = dict "elements" $d.elements "files" ($d.files | default dict) -}}
+  {{- else -}}
+    {{- errorf "excalidraw: %q is not in the bundle of %s" . $.Page.File.Path -}}
+  {{- end -}}
+{{- end -}}
 <link rel="stylesheet" href="https://esm.sh/@excalidraw/excalidraw@0.18.1/dist/prod/index.css">
 <div id="excalidraw-{{ .Ordinal }}" style="height:70vh;border:1px solid var(--border);border-radius:8px"></div>
 <script type="module">
@@ -8,9 +19,9 @@
     import("https://esm.sh/react@18.2.0"),
     import("https://esm.sh/react-dom@18.2.0/client"),
     import("https://esm.sh/@excalidraw/excalidraw@0.18.1" + deps),
-    fetch({{ $src | relURL }}).then(r => r.json()),
+    {{ with $scene }}{{ . }}{{ else }}fetch({{ $src | relURL }}).then(r => r.json()){{ end }},
   ]);
-  const initialData = { elements: d.elements, appState: { viewBackgroundColor: "transparent" }, scrollToContent: true };
+  const initialData = { elements: d.elements, files: d.files, appState: { viewBackgroundColor: "transparent" }, scrollToContent: true };
   const root = createRoot(document.getElementById("excalidraw-{{ .Ordinal }}"));
   const render = () => root.render(React.createElement(Excalidraw, {
     initialData,
