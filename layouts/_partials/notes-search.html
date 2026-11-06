@@ -1,0 +1,48 @@
+{{- /* Search over notes only. The index is inlined, not a separate index.json, so StatiCrypt encrypts it with the page.
+     Context: the page it's on, which is left out of the index. */ -}}
+<div id="searchbox" class="searchbox">
+  <input id="searchInput" placeholder="Search notes ↵" aria-label="search notes" type="search" autocomplete="off" maxlength="64">
+  <ul id="searchResults" class="searchResults" aria-label="search results"></ul>
+</div>
+{{- /* Notes cascade `list: local`, so they aren't in site.Pages; walk the tree from /notes instead. */ -}}
+{{- $index := partial "notes-search-walk" (site.GetPage "/notes") | complement (slice .) }}
+<script>{{ (resources.Get "js/fuse.basic.min.js").Content | safeJS }}</script>
+<script>
+  const fuse = new Fuse({{ apply $index "partial" "notes-search-entry" "." }}, { keys: ["title", "content"], ignoreLocation: true, threshold: 0.4, includeMatches: true });
+  const input = document.getElementById("searchInput"), list = document.getElementById("searchResults");
+  // Text around the longest matched run in the note body, so results show why they matched.
+  const snippet = (item, matches) => {
+    const ranges = matches.find(m => m.key === "content")?.indices ?? [];
+    const [s] = ranges.reduce((best, r) => r[1] - r[0] > best[1] - best[0] ? r : best, [0, -1]);
+    const from = Math.max(0, s - 60);
+    return (from ? "…" : "") + item.content.slice(from, s + 100).trim() + (item.content.length > s + 100 ? "…" : "");
+  };
+  input.addEventListener("input", () => {
+    list.replaceChildren(...fuse.search(input.value.trim()).slice(0, 20).map(({ item, matches }) => {
+      const li = document.createElement("li"), div = document.createElement("div"), title = document.createElement("div"),
+        text = document.createElement("small"), a = document.createElement("a");
+      title.textContent = item.title;
+      text.textContent = snippet(item, matches);
+      text.style.color = "var(--secondary)";
+      div.append(title, text);
+      a.className = "entry-link"; a.href = item.permalink; a.setAttribute("aria-label", item.title);
+      li.append(div, a);
+      return li;
+    }));
+  });
+</script>
+
+{{- define "_partials/notes-search-walk" }}
+  {{- $pages := slice }}
+  {{- range .Pages }}
+    {{- $pages = $pages | append . }}
+    {{- if .IsSection }}{{ $pages = $pages | append (partial "notes-search-walk" .) }}{{ end }}
+  {{- end }}
+  {{- return $pages }}
+{{- end }}
+
+{{- define "_partials/notes-search-entry" }}
+  {{- /* Drop scripts first: the excalidraw shortcode inlines the whole diagram, images included. */ -}}
+  {{- $text := .Content | replaceRE `(?s)<script.*?</script>` "" | plainify | htmlUnescape }}
+  {{- return dict "title" .Title "permalink" .RelPermalink "content" $text }}
+{{- end }}
